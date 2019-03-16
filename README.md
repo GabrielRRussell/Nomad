@@ -49,7 +49,7 @@ As of writing, the current programs are
 I'm planning on writing some python scripts to simplify writing programs for Nomad, as they take quite a long time to write out by hand. Check the scripts folder for what's in so far.
 
 # To-Do
-[ ] Extend Program Space  
-[ ] Write more Sample Programs
-[ ] Write a compiler
-[ ] Maybe an extension of the original operation set..?
+- [ ] Extend Program Space  
+- [ ] Write more Sample Programs
+- [ ] Write a compiler
+- [ ] Maybe an extension of the original operation set..?
