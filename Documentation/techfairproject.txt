@@ -1,0 +1,178 @@
+Custom CPU Project
+Gabriel Russell 11th Grade
+
+"Nomad" - A simple custom designed CPU made in the program Logisim, with a unique architecture and feature set. While impractical for general use, it can be programmed to do a variety of tasks. It has various Arithmatic (Add,Sub,Multiply,Divide), Logical (AND,NOT,OR,XOR), and Logic Flow (Jump, Conditionals) operations that can be performed. The end goal of the project is to have a functioning CPU with the ability to write simple software for it. I have the ALU designed as of 3/11/19 (MM/DD/YY), which means that it can perform basic arithmetic. I am currently working on setting up Memory Operations and Program flow. Once that is done, working on the assembly language will be my next goal. I've made simpler CPU's, although this one is a rather large endeavour.
+
+Theoretically, at the end of this project, it could be converted into VHDL, which could be used to design a very real piece of hardware, although that is not my goal, as I find that an unrealistic goal, although if possible would be a nice addition.
+
+Nomad has some variety in it's I/O. The main goal for the project is to have various Inputs and Outputs that the user can use to write functional software. It is limited by simple memory read / writes though, so it may be more optimal to try and automate most of the software instead of relying on user input.
+
+I am also designing an Assembly language to go along with Nomad, that will be able to be compiled via a python script. This may not be ready for the tech fair, although it is a long-term goal of this project. It would simplify writing software for Nomad. Right now, most of the work done is coded via manually typing binary, and converting to hexadecimal which is input to a ROM file.
+
+Input:
+	Keyboard (ASCII Character that is recognizable as an internal register. Left-most bit represents write state)
+	Button Array (8 Bit Sequence, each button corresponds to a bit)
+
+Output:
+	LED Array (8 LED's, Controlled by Individual Bits Set)
+	A Terminal Screen (ASCII output to a register that displays on the screen)
+	Two Seven Segment Displays
+
+Stats:
+	2KB of RAM
+	2KB of Program Space or more (Technically the Program Engine could include more, but it's the 8bit upper limit, any more would not support jump operations past that. The maximum program size without proper jumps could be 15MB) 
+	16 Bit Instruction Size (Instruction Size is independent of CPU Bus Width, the Program Engine uses the extra bits to help perform extra logic)
+	8 Bit ALU / Address Width
+	??? of Registers (Undecided, may add or remove more later)
+
+The goal of the project is to demonstrate low-level logic, and how if you truly want something done, you have to do it yourself. Everything here is a custom implementation. Math and Logic is all done by the person, none of which is done by the program. Logisim simply gives the pieces you need to start creating one. I've been playing around with it for quite some time now and feel comfortable doing tougher tasks.
+
+Below is technical detail of the programming, mostly for my use, although if you wish to know how the deeper aspects of Nomad work, take a look here.
+
+
+8 Bit Memory Words
+16 Bit Instructions
+You might be wondering why instructions are 16 bits instead of the actual 13/14 they take. There is a really simple reason: More space to add stuff in later. If I feel like adding a LSL/LSR, etc then having the extra bits and space would help quite a bit. Not to mention I like uniform numbers, and 16 bits is 4 Hex Characters making it easier to type out instead of having to describe hanging bits. Hanging Bits that are not used are at the MSB. 
+
+In this order (lsb->msb)
+4 Bit Operation
+2 Bit Flags
+8 Bit Operand
+
+AB, used as ALU Inputs	
+	A Register
+	B Register
+M, used in MOV
+	M Register
+J, used as Jump Location
+
+Xx - General Purpose Registers
+0x
+1x
+2x
+3x
+
+Xs - Special Output Registers
+0s - LED Array
+1s - Terminal Output (First Seven from LSB are ASCII, MSB is Enable Write)
+2s - Seven Segment (1)
+3s - Seven Segment (2)
+
+Xi - Special Input Registers
+0i - Keyboard (Read as ASCII Character)
+1i - Button Array (8 Buttons, bit corresponding to each one)
+
+Internally, each register has it's own number. Each has it's own permissions for Read and Write.
+Some have both. The following is a list with each register "ID" in Decimal (translate to binary/hex when programming) for your sake.
+Perms: 
+	R - Read
+	W - Write
+	O - Output (Symbollic)
+	I - Input (Symbollic)
+If any register does not have a specific permission, it is physically unable to use it, even if you program it in. Don't.
+
+Name - ID - Perm
+0x - 00 / RW
+1x - 01 / RW
+2x - 03 / RW
+3x - 04 / RW
+0s - 05 / RWO
+1s - 06 / RWO
+2s - 07 / RWO
+3s - 08 / RWO
+0i - 09 / RI
+1i - 10 / RI
+ A - 11 / RW
+ B - 12 / RW
+ M - 13 / RW
+ J - 14 / RW
+
+RAM - 8 Bit Words, 8 Bit Addresses
+255 Addresses * 8 Bits = 2048 Bits / 2KB of RAM
+
+Operations:
+	000 No Op
+		00000 No Operation
+		00001 No Operation
+		00010 No Operation
+		00011 No Operation
+	001 ATH
+		00100 ADD
+		00101 SUB
+		00110 MUL
+		00111 DIV
+	010 LOG
+		01000 AND
+		01001 NOT
+		01010 OR
+		01011 XOR
+	100 MOV
+		10000 Move Operand to Register at M
+		10001 Move Operand to Address  at M
+		10010 Move Operand to Register at M
+		10011 Move Operand to Address  at M
+	101 MOS
+		10100 Move Register to Register at M
+		10101 Move Register to Address  at M
+		10110 Move Address  to Register at M
+		10111 ILLEGAL Operation 
+	110 JMP
+		11000 Jmp to J
+		11001 Jmp to J
+		11010 Jmp to J
+		11011 Jmp to J
+	111 JCD
+		00111 Jump when A is equal to B
+		01111 Jump when A is not equal to B
+		10111 Jump when A is greater than B
+		11111 Jump when A is lesser than B
+
+No Op (No Operation)
+Proper Usage:
+	Skip the current cycle. Technically useless. This is so that if empty ROM values are somehow ran, they won't affect the current state of the CPU.
+
+MOV (Move Value)
+Proper Usage:
+	Moves a value in the operand to a register, or address
+		Flag: [00] Move Operand to Register numbered at M
+		Flag: [01] Move Operand to Address numbered at M
+MOS (Move Stored Value)
+Proper Usage:
+	Moves a value located at a(n) [register/address] (M) to a(n) [register/address]
+		Flag: [x0] Move operand to Register at M
+		Flag: [x1] Move operand to address  at M
+		Flag: [0x] Operand is a  Register
+		Flag: [1x] Operand is an Address
+
+		Flag: [11] IS AN ILLEGAL OPERATION
+			[11] Will Lock the CPU, only one address may be r/w in an instruction
+		Flag: [00] IS legal. Multiple register read writes can occur at the same instruction tick.
+
+JMP (Jump)
+Proper Usage:
+	Jumps to J, unconditionally
+
+JCD (Jump Conditional)
+Proper Usage:
+	Jumps to J, conditionally based on if A is [Equal To/NotEqual To/Greater Than/Lesser Than] B
+		Flag: [00] Equal To
+		Flag: [01] Not Equal To
+		Flag: [10] Greater Than
+		Flag: [11] Lesser Than
+
+ATH (Arithmetic)
+Proper Usage:
+	[Add/Subtract/Multiply/Divide] AB, output to register numbered at M
+		Flag: [00] Add
+		Flag: [01] Sub
+		Flag: [10] Mul
+		Flag: [11] Div 
+
+LOG (Logic)
+Proper Usage:
+	[AND/NOT/OR/XOR] A (and B when applicable), output to register numbered at M.
+		Flag: [00] AND
+		Flag: [01] NOT (Not A)
+		Flag: [10] OR
+		Flag: [11] XOR
+
