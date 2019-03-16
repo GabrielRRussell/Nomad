@@ -8,3 +8,5 @@ The main reason being that my foolish self made some very dumb mistakes in the p
 These are simply remnants of an older product, and as such I would recommend that you check out Nomad 2.0 Non-Legacy to learn more about the actual project results. 
 
 All of the documentation here is outlined in the lone txt file that I created. It has mistakes, typos, and bad grammar. It was never meant to see the light of the internet, so don't expect much from it.
+
+EDIT: This should be launched in the original Logisim, NOT Logisim Evolution.
