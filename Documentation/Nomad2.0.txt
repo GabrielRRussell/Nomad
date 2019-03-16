@@ -1,0 +1,99 @@
+Nomad CPU - Redesign
+
+The original implementation was messy.
+The documentation was extremely unordered and messy.
+Ultimately, the goal would fall short due to a silly oversight by myself.
+This redesign is done from the ground up,
+using new concepts to hopefully avoid some of the pitfalls that I have caused earlier. 
+Thankfully, most of the logic is still here, so I have not much cause for concern.
+
+The old design was inneficient despite having many features. 
+I dislike the complexity, although many of the operations were appreciated.
+
+Previously, I used several built in components for things such as Multiplication or Divison.
+Here, I will only use pre-built components for saving space. All of the Operations will be hand designed.
+This is because the goal is to show off my own work, not putting together someone elses.
+
+Design Goals:
+	8Bit CPU
+	Conditional Logic
+	Basic Math
+	Unsigned Numbers
+16 Bits per Instruction
+$or : 8 Bits
+$rs : 4 Bits
+$op : 4 Bits
+
+$or: Operand
+$rs: Register Select
+$op: Operation
+
+The significance of a 4 Bit Register Select.
+Four Bits represents the range of zero to 15, or 16 values total in decimal. This means that I could have up to 16 registers total.
+I believe 16 is MORE than enough. In order to use as a proper computing unit, only a few internal registers are needed. 16 is a LARGE number.
+
+Available Registers:
+	If a register does not have R or W, it physically does not have that capability, it is hooked up to another hardware device to supply it.
+	NAME | ID | RW | PURPOSE
+	
+	A : 0000 RW (ALU Input)
+	B : 0001 RW (ALU Input)
+	x0: 0010 RW (General)
+	x1: 0011 RW (General)
+	x2: 0100 RW (General)
+	x3: 0101 RW (General)
+	x4: 0110 RW (General)
+	x5: 0111 RW (General)
+	x6: 1000 RW (General)
+	s0: 1001 RW (Two Hexadecimal Displays. Both halves of the Register display to a separate Hex Display)
+	s1: 1010 RW (Teletype Terminal. Outputs as ASCII-Characters. The assembler translates a character from PNT to a MOV instruction)
+	s2: 1011 RW (LED Array. 8 Separate LEDs, each Bit Corresponds to one. Colors to be decided later)
+	i0: 1100 R- (Keyboard. 7 Bit ASCII Character.) 
+	i1: 1101 R- (Dipswitch. 8 Switches.)
+	i2: 1110 R- (Joystick. First Half is X pos, Second Half is Y pos)
+	i3: 1111 R- (Button Array. Each button corresponds to a bit)
+	
+	x0 - x6 (7) General Purpose Registers. Do with them whatever you want.
+	A and B (2) ALU Inputs. Whenever performing a math Operation, they'll be read from.
+	s0 - s2 (3) Output Registers, hooked up to hardware. Technically they can be read from, although there isn't much point to it.
+	i0 - i3 (4) A variety of input devices. Read Only, as Writes are managed from the appropriate hardware. They'll update each tick.
+
+Operations:
+	NOP: Do Nothing
+	Add: A + B => $rs
+	Sub: A - B => $rs
+	And: A AND B => $rs
+	Not: !A => $rs
+	Or : A OR B => $rs
+	Xor: A XOR B => $rs
+	LSL: A <-- $or => $rs, Max of 8 Bits Shifted (only first three bits read)
+	LSR: A --> $or => $rs, Max of 8 Bits Shifted (only first three bits read)
+	Mov: $or => $rs
+	LMR: 0x$or => $rs
+	LRM: $rs => 0x$or
+	JEQ: If A == B, Jump to 0x$or in ROM
+	JNQ: If A != B, Jump to 0x$or in ROM
+	JGT: If A >  B, Jump to 0x$or in ROM
+	JLT: If A <  B, Jump to 0x$or in ROM
+
+	PNT: Print out to the terminal the $or (in ASCII) (A character chart will be provided for scripters)
+	PNT is a symbolic operation. It really just translates to a MOV to s1, but the compiler will read the characters to be placed, instead of the user having to input ASCII codes one by one. So PNT "Hello" would really translate to Five MOVs to s1.
+
+	NOP: 0000
+	Add: 0001
+	Sub: 0010
+	And: 0011
+	Not: 0100
+	Or : 0101
+	Xor: 0110
+	LSL: 0111
+	LSR: 1000
+	Mov: 1001
+	LMR: 1010
+	LRM: 1011
+	JEQ: 1100
+	JNQ: 1101
+	JGT: 1110
+	JLT: 1111
+	PNT: Symbolic Mov
+

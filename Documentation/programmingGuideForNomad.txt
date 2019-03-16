@@ -1,0 +1,38 @@
+Nomad CPU Programming Information|
+_________________________________|
+
+Until the nomad is completely designed and a compiler is built, all code is developed in Binary. To help speed up the process, a handy cheat sheet of hexadecimal values will be used to show off the instruction format.
+
+Little Endian (LSB -> MSB) programming Layout: 
+	Operation - Register Select - Operand
+
+OR OP is the format. Four hex characters, each representing four bits. O is Operation, R is register select, OP is operand.
+
+Here are some operation hex translations:
+
+0: Nop
+1: Add
+2: Sub
+3: And
+4: Not
+5: Or
+6: Xor
+7: LSL
+8: LSR
+9: Mov
+A: LMR
+B: LRM
+C: JEQ
+D: JNQ
+E: JGT
+F: JLT
+
+0: A
+1: B
+9: s0 Hex Displays
+A: s1 Screen
+B: s2 LEDs
+C: i0 Keyboard
+D: i1 Dipswitch
+E: i2 Joystick
+F: i3 Button Array
