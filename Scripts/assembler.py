@@ -63,7 +63,7 @@ for line in inFile:
         operation = "9"
         register = "A"
         operand = hex(ord(command[1]))[2:]
-    elif command[0] in ("add, sub", "and", "not", "or", "xor"):
+    elif command[0] in ("add", "sub", "and", "not", "or", "xor"):
         register = registerKeys[command[1]]
         operand = "00"
     elif command[0] in ("lsl", "lsr"):
@@ -80,12 +80,27 @@ for line in inFile:
         operand = "0" + str(hex(int(command[2]))[2:])
     # Locate Memory / Register Memory / Register are simply swapped values for their definition.
     elif command[0] in "lmr":
+        if command[2][0:1] != "0x":
+            print("MEMORY MUST BE ADDRESSED IN HEX FORM 0x, ERROR AT LINE " + str(currentLine))
+            break
+        if len(command[2][2:]) > 2:
+            print("MEMORY ADDRESS IS LIMITED TO TWO HEX VALUES, IMPOSSIBLE ADDRESS DETECTED, ERROR AT LINE " + str(currentLine))
+            break
         register = registerKeys[command[1]]
         operand = command[2][2:]
     elif command[0] in "lrm":
+        if command[3][0:1] != "0x":
+            print("MEMORY MUST BE ADDRESSED IN HEX FORM 0x, ERROR AT LINE " + str(currentLine))
+            break
+        if len(command[3][2:]) > 2:
+            print("MEMORY ADDRESS IS LIMITED TO TWO HEX VALUES, IMPOSSIBLE ADDRESS DETECTED, ERROR AT LINE " + str(currentLine))
+            break
         register = registerKeys[command[2]]
         operand = command[1][2:]
     elif command[0] in "mov":
+        if int(command[1]) > 255:
+            print("IMPOSSIBLE NUMBER DETECTED, MAX BIT WIDTH IS 8 BITS OR VALUE OF 255 DEC, ERROR AT LINE " + str(currentLine))
+            break
         register = registerKeys[command[1]]
         operand = hex(int(command[2]))[2:]
     # Only the operand is read in a jump command.
