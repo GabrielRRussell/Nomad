@@ -1,0 +1,9 @@
+// Text Comment Test
+mov s1 32
+mov s1 64
+// More Comments
+mov A 15
+mov B 35
+and s1
+// Comments!
+// There should be FIVE instructions generated from this file.
