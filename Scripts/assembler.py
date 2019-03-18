@@ -21,7 +21,7 @@ registerKeys = {
 
 # Translation of Operation Values
 operationKeys = {
-    "nop": "0",
+    "nop": "0", "//": "0",
     "add": "1", "sub": "2",
     "and": "3", "not": "4", "or": "5", "xor": "6",
     "lsl": "7", "lsr": "8",
@@ -98,7 +98,7 @@ for line in inFile:
         register = registerKeys[command[2]]
         operand = command[1][2:]
     elif command[0] in "mov":
-        if int(command[1]) > 255:
+        if int(command[2]) > 255:
             print("IMPOSSIBLE NUMBER DETECTED, MAX BIT WIDTH IS 8 BITS OR VALUE OF 255 DEC, ERROR AT LINE " + str(currentLine))
             break
         register = registerKeys[command[1]]
@@ -113,5 +113,6 @@ for line in inFile:
     if len(str(operand)) < 2:
         operand = "0" + str(operand)
     # Print the instruction for verification, and write to the file.
-    print(str(operation) + str(register) + str(operand))
-    outFile.write(str(operation) + str(register) + str(operand) + "\n")
+    if command[0] != "//":
+        print(str(operation) + str(register) + str(operand))
+        outFile.write(str(operation) + str(register) + str(operand) + "\n")
