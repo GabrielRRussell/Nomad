@@ -2,14 +2,15 @@
 Custom CPU made in Logisim. HCS Tech Fair 2019
 
 # What makes Nomad Special?
-Absolutely nothing. It has no distinguishing features that could make it possibly useful if converted into a real physical circuit, there are currently no complete compilers for it, and the language features are limited.
+Nomad is an Eight-Bit CPU designed entirely by myself.  
+For those interested in developing software for it, there is a compiler available, although currently there is no formal documentation on the format of the language.
 
 # What makes Nomad Unique?
 It's made entirely by me. Some bulit-in components are used, but only to display the useful-ness of the language features.  
 The lone fact that it was entirely designed by me makes it interesting, at least to me.
 
 # What does Nomad feature?
-ROM Storage: 256 * 16 Addressable Bits of Memory | 512 Bytes of ROM Program Storage  
+ROM Storage: 256 * 16 Addressable Bits of Memory | 512 Bytes of ROM Program Storage   (soon to be upgraded to 2048 * 16 bits of ROM)  
 RAM Storage: 256 * 08 Addressable Bits of Memory | 256 Bytes of Random Access Memory  
 Registers: 016 * 08 Registers | 16 Bytes of Registers (12 RW, 4 R-)  
 Input Methods: Keyboard, Switches, Buttons, Joystick  
@@ -49,7 +50,10 @@ As of writing, the current programs are
 I'm planning on writing some python scripts to simplify writing programs for Nomad, as they take quite a long time to write out by hand. Check the scripts folder for what's in so far.
 
 # To-Do
-- [ ] Extend Program Space  
+- [ ] Extend Program Space
+
 - [ ] Write more Sample Programs
-- [ ] Write a compiler
+
+- [x] Write a compiler
+
 - [ ] Maybe an extension of the original operation set..?
