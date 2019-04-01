@@ -116,3 +116,4 @@ for line in inFile:
     if command[0] != "//":
         print(str(operation) + str(register) + str(operand))
         outFile.write(str(operation) + str(register) + str(operand) + "\n")
+outFile.close()
