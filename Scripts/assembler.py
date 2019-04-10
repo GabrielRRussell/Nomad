@@ -27,7 +27,7 @@ operationKeys = {
     "and": "3", "not": "4", "or": "5", "xor": "6",
     "lsl": "7", "lsr": "8",
     "mov": "9", "pnt": "9", "lmr": "A", "lrm": "B",
-    "jeq": "C", "jnq": "D", "jgt": "E", "jlt": "F"
+    "jeq": "C", "jnq": "D", "jgt": "E", "jlt": "F", "print": "9"
     }
 
 # I slapped it into this really ugly function for a reason. I'll probably
@@ -82,7 +82,11 @@ def compile(inFile, outFile):
                 print("Stopping Assembly")
                 break
             register = registerKeys[command[1]]
-            operand = "0" + str(hex(int(command[2]))[2:])
+            print (command[2])
+            shiftBy = int(command[2])
+            shiftBy = hex(shiftBy)[2:]
+            print(shiftBy)
+            operand = "0" + str(shiftBy)
         # Locate Memory / Register Memory / Register are simply swapped values for their definition.
         elif command[0] in "lmr":
             if command[2][0:2] != "0x":
@@ -110,7 +114,7 @@ def compile(inFile, outFile):
             operand = hex(int(command[2]))[2:]
         # Only the operand is read in a jump command.
         elif command[0] in ("jeq", "jnq", "jgt", "jlt"):
-            operand = hex(int(command[1][2:]))[2:]
+            operand = command[1][2:]
             register = "0"
 
         # Check to make sure values aren't dropped. Each address is four hex values wide
@@ -118,7 +122,21 @@ def compile(inFile, outFile):
         if len(str(operand)) < 2:
             operand = "0" + str(operand)
         # Print the instruction for verification, and write to the file.
-        if command[0] != "//":
+        if command[0] == "print":
+            temp = ""
+            res = ""
+            i = 0
+            for item in command[1:]:
+                item.replace('"', "")
+                res += item
+                res += " "
+
+            for char in res:
+                hexAscii = hex(ord(char))[2:]
+                outFile.write("9A" + hexAscii + "\n")
+            outFile.write("9A00")
+                
+        if command[0] != "//" and command[0] != "print":
             print(str(operation) + str(register) + str(operand))
             outFile.write(str(operation) + str(register) + str(operand) + "\n")
     outFile.close()
